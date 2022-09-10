@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/styles.css">
     <title>Document</title>
 </head>
 <body>
+
+    <div class="box" id="heading">
+        <h1> <%= listTitle %> </h1>
+    </div>
     
-    <h1>It's a <%= day %>!</h1>
+    <div class="box">
+            <% newItemList.forEach(item => { %>
+               <div class="item">
+                <input type="checkbox">
+                    <p> <%= item %> </p>
+                </div>
+            <% }); %>
+    
+
+            <form class="item" action="/" method="POST">
+                <input type="text" name="newItem" placeholder="Add item..." autocomplete="off">
+                <button type="submit" name="list" value="<%= listTitle %>">+</button>
+            </form>
+
+    </div>
 
 </body>
 </html> 
