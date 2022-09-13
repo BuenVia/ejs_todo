@@ -14,11 +14,17 @@
     </div>
     
     <div class="box">
+
             <% newItemList.forEach(item => { %>
-               <div class="item">
-                <input type="checkbox">
-                    <p> <%= item %> </p>
-                </div>
+
+                <form action="/delete" method="POST">
+                    <div class="item">
+                        <input type="checkbox" name="checkbox" value="<%= item._id %>" onchange="this.form.submit()">
+                        <p> <%= item.name %> </p>
+                    </div>
+                </form>
+
+
             <% }); %>
     
 

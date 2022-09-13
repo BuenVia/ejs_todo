@@ -13,54 +13,39 @@ const itemsSchema = new mongoose.Schema({
 
 const Item = mongoose.model("Item", itemsSchema)
 
-const item1 = new Item({
-    name: 'This is a new item'
-})
-
-const item2 = new Item({
-    name: 'This is a second item'
-})
-
-const item3 = new Item({
-    name: 'This is a third item'
-})
-
-const defaultItems = [item1, item2, item3]
-
-async function updateItems(arr) {
-    try {
-        await Item.insertMany(arr)
-        console.log('Success');
-    } catch (err) {
-        console.error(err);
-    } finally {
-        mongoose.connection.close()
-    }
-}
-
-updateItems(defaultItems)
-
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(`${__dirname}/public`))
 
 app.get('/', (req, res) => {
-    res.render('list', { listTitle: 'Today', newItemList: [] })
+
+    Item.find({}, async (err, foundItems) => {
+        res.render('list', { listTitle: 'Today', newItemList: foundItems })
+    })
 })
 
 app.post('/', (req, res) => {
 
-    if(req.body.list === "Work") {
-        workItems.push(req.body.newItem)
-        res.redirect('/work')
-    } else {
-        item.push(req.body.newItem)
-        res.redirect('/')
-    }
+    const itemName = req.body.newItem
+    const item = new Item({
+        name: itemName
+    })
+    item.save()
+
+    res.redirect('/')
+
 })
 
-app.get('/work', (req, res) => {
-    res.render('list', { listTitle: 'Work', newItemList: workItems})
+app.post('/delete', (req, res) => {
+    const checkedId = req.body.checkbox
+    Item.findByIdAndRemove(checkedId, (err) => {
+        console.log(`${checkedId} Successfully removed`);
+    })
+    res.redirect('/')
+})
+
+app.get('/:customListName', (req, res) => {
+    const customListName = req.params.customListName
 })
 
 app.get('/about', (req, res) => {
