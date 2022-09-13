@@ -1,21 +1,51 @@
 const express = require('express')
 const bodyParser = require('body-parser')
-const date = require(`${__dirname}/date.js`)
+const mongoose = require('mongoose')
+
 
 const app = express()
 
-const item = []
-const workItems = []
+mongoose.connect('mongodb+srv://buenvia:buenvia_11@cluster0.w90ez.mongodb.net/todolistDB?retryWrites=true&w=majority', { useNewUrlParser: true })
 
-console.log(date);
+const itemsSchema = new mongoose.Schema({
+    name: String
+})
+
+const Item = mongoose.model("Item", itemsSchema)
+
+const item1 = new Item({
+    name: 'This is a new item'
+})
+
+const item2 = new Item({
+    name: 'This is a second item'
+})
+
+const item3 = new Item({
+    name: 'This is a third item'
+})
+
+const defaultItems = [item1, item2, item3]
+
+async function updateItems(arr) {
+    try {
+        await Item.insertMany(arr)
+        console.log('Success');
+    } catch (err) {
+        console.error(err);
+    } finally {
+        mongoose.connection.close()
+    }
+}
+
+updateItems(defaultItems)
 
 app.set('view engine', 'ejs')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(express.static(`${__dirname}/public`))
 
 app.get('/', (req, res) => {
-    let day = date.getDay()
-    res.render('list', { listTitle: day, newItemList: item })
+    res.render('list', { listTitle: 'Today', newItemList: [] })
 })
 
 app.post('/', (req, res) => {
